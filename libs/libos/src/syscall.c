@@ -71,6 +71,18 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 void *_sbrk(intptr_t increment) {
+  extern uint8_t end;
+  static uint8_t *program_break = NULL;
+  if (program_break == NULL) {
+    program_break = &end;
+  }
+  uint8_t *addr = program_break + increment;
+  assert(addr >= &end);
+  if (_syscall_(SYS_brk, (intptr_t) addr, 0, 0) == 0) {
+    void *old_brk = (void *) program_break;
+    program_break = addr;
+    return old_brk;
+  }
   return (void *)-1;
 }
 
