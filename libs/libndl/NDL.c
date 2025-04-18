@@ -9,7 +9,11 @@ static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
 uint32_t NDL_GetTicks() {
-  return 0;
+  // return 0;
+  // extern int _gettimeofday(struct timeval *tv, struct timezone *tz);
+  uint64_t time[2];
+  _gettimeofday(&time, NULL);
+  return (uint32_t)(time[1] / 1000);
 }
 
 int NDL_PollEvent(char *buf, int len) {
