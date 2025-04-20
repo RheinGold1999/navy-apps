@@ -1,4 +1,4 @@
-NAME = bmp-test
-SRCS = main.c
+NAME = bmp
+SRCS = bmp.c
 LIBS += libbmp libndl
 include $(NAVY_HOME)/Makefile
