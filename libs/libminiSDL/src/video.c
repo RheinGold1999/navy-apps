@@ -7,12 +7,33 @@
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+
+  // 如果传入的区域为空，使用整个 src/dst surface 尺寸
+  SDL_Rect src_rect = srcrect ? *srcrect : (SDL_Rect){0, 0, src->w, src->h};
+  SDL_Rect dst_rect = dstrect ? *dstrect : (SDL_Rect){0, 0, src_rect.w, src_rect.h};
+
+  // 简单边界检查（防止越界访问）
+  if (src_rect.x < 0 || src_rect.y < 0 ||
+    src_rect.x + src_rect.w > src->w || src_rect.y + src_rect.h > src->h ||
+    dst_rect.x < 0 || dst_rect.y < 0 ||
+    dst_rect.x + src_rect.w > dst->w || dst_rect.y + src_rect.h > dst->h) {
+    assert(false && "out of rect boundry");
+  }
+
+  int bytes_per_pixel = src->format->BytesPerPixel;
+
+  for (int y = 0; y < src_rect.h; y++) {
+    uint8_t *src_row = (uint8_t *)src->pixels + (src_rect.y + y) * src->pitch + src_rect.x * bytes_per_pixel;
+    uint8_t *dst_row = (uint8_t *)dst->pixels + (dst_rect.y + y) * dst->pitch + dst_rect.x * bytes_per_pixel;
+    memcpy(dst_row, src_row, src_rect.w * bytes_per_pixel);
+  }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
+  NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
 }
 
 // APIs below are already implemented.

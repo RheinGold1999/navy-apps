@@ -10,12 +10,12 @@ static int screen_w = 0, screen_h = 0;
 
 uint32_t NDL_GetTicks() {
   uint64_t time[2];
-  _gettimeofday(&time, NULL);
+  gettimeofday(&time, NULL);
   return (uint32_t)(time[1] / 1000);
 }
 
 int NDL_PollEvent(char *buf, int len) {
-  int fd = _open("/dev/events", 0, 0);
+  int fd = open("/dev/events", 0, 0);
   return read(fd, buf, len);
 }
 
@@ -37,7 +37,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   //   }
   //   close(fbctl);
   // }
-  int fd = _open("/proc/dispinfo", 0, 0);
+  int fd = open("/proc/dispinfo", 0, 0);
   const size_t LEN = 64;
   char buf[LEN];
   read(fd, buf, LEN);
@@ -65,10 +65,9 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   int screen_w = 0;
   int screen_h = 0;
   NDL_OpenCanvas(&screen_w, &screen_h);
-  lseek(fd, (x + y * screen_w), 0);
   for (int i = 0; i < h; ++i) {
-    write(fd, (pixels + i * w), w);
-    lseek(fd, w, 1);
+    lseek(fd, (x + (y + i) * screen_w) * 4, SEEK_SET);
+    write(fd, (pixels + i * w), w * 4);
   }
   close(fd);
 }

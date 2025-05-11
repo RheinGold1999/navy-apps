@@ -9,7 +9,7 @@ int main() {
   int w, h;
   void *bmp = BMP_Load("/share/pictures/projectn.bmp", &w, &h);
   assert(bmp);
-  NDL_OpenCanvas(&w, &h);
+  // NDL_OpenCanvas(&w, &h);
   printf("Width = %d, Height = %d\n", w, h);
   NDL_DrawRect(bmp, 0, 0, w, h);
   free(bmp);
