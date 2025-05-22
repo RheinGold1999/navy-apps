@@ -151,7 +151,7 @@ static inline fixedpt fixedpt_abs(fixedpt A) {
 }
 
 static inline fixedpt fixedpt_floor(fixedpt A) {
-	return A & 0xFFFF'FFFF'FFFF'FF00ULL;
+	return A & 0xFFFFFFFFFFFFFF00ULL;
 }
 
 static inline fixedpt fixedpt_ceil(fixedpt A) {
